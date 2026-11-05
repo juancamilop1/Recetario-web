@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% if receta %}Editar receta{% else %}Nueva receta{% endif %}</title>
+</head>
+
+<body>
+
+    <h1>{% if receta %}Editar receta{% else %}Nueva receta{% endif %}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <p>
+            Nombre:
+            <input type="text" name="nombre" value="{{ receta.nombre }}">
+        </p>
+        <p>
+            Categoría:
+            <input type="text" name="categoria" value="{{ receta.categoria }}">
+        </p>
+        <p>
+            Ingredientes:
+            <textarea name="ingredientes">{{ receta.ingredientes }}</textarea>
+        </p>
+        <p>
+            Preparación:
+            <textarea name="preparacion">{{ receta.preparacion }}</textarea>
+        </p>
+        <input type="submit" value="Guardar">
+    </form>
+
+    <br>
+
+    <a href="{% url 'recetas:lista_recetas' %}">
+        Volver al recetario
+    </a>
+
+</body>
+</html>

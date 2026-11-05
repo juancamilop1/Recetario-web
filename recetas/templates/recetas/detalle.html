@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ receta.nombre }}</title>
+</head>
+
+<body>
+
+    <h1>{{ receta.nombre }}</h1>
+
+    <h2>Categoría</h2>
+
+    <p>{{ receta.categoria }}</p>
+
+    <h2>Ingredientes</h2>
+
+    <p>{{ receta.ingredientes }}</p>
+
+    <h2>Preparación</h2>
+
+    <p>{{ receta.preparacion }}</p>
+
+    <p>
+        <a href="{% url 'recetas:editar_receta' receta.id %}">Editar</a>
+        |
+        <a href="{% url 'recetas:eliminar_receta' receta.id %}">Eliminar</a>
+    </p>
+
+    <form action="{% url 'recetas:votar' receta.id %}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><h2>Votar receta</h2></legend>
+            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+            {% for opcion in receta.opcion_set.all %}
+                <input type="radio" name="opcion" id="opcion{{ forloop.counter }}" value="{{ opcion.id }}">
+                <label for="opcion{{ forloop.counter }}">{{ opcion.opcion_texto }}</label><br>
+            {% endfor %}
+        </fieldset>
+        <input type="submit" value="Vote">
+    </form>
+
+    <br>
+
+    <a href="{% url 'recetas:lista_recetas' %}">
+        Volver al recetario
+    </a>
+
+</body>
+</html>
