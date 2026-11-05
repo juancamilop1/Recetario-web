@@ -10,7 +10,7 @@ Aplicación web para organizar y administrar recetas de cocina: registro, consul
 
 Documento de la Entrega 1 (SRS, UML, backlog): [`docs/Recetario Web.pdf`](docs/Recetario%20Web.pdf)
 
-- Video de presentación: _(enlace)_  
+- Video de presentación: https://youtu.be/FFmJFL3By50  
 - Repositorio: https://github.com/juancamilop1/Recetario-web
 
 ## Requisitos
