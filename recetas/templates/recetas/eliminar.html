@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Eliminar receta</title>
+</head>
+
+<body>
+
+    <h1>Eliminar receta</h1>
+
+    <p>¿Eliminar "{{ receta.nombre }}"?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="Eliminar">
+    </form>
+
+    <br>
+
+    <a href="{% url 'recetas:detalle_receta' receta.id %}">
+        Cancelar
+    </a>
+
+</body>
+</html>

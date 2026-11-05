@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recetario</title>
+</head>
+
+<body>
+
+    <h1>Mi Recetario</h1>
+
+    <p>
+        <a href="{% url 'recetas:crear_receta' %}">Nueva receta</a>
+    </p>
+
+    <h2>Recetas disponibles</h2>
+
+    {% if recetas %}
+        {% for receta in recetas %}
+
+            <h3>
+                <a href="{% url 'recetas:detalle_receta' receta.id %}">
+                    {{ receta.nombre }}
+                </a>
+            </h3>
+
+            <p>
+                Categoría: {{ receta.categoria }}
+            </p>
+
+            <p>
+                <a href="{% url 'recetas:editar_receta' receta.id %}">Editar</a>
+                |
+                <a href="{% url 'recetas:eliminar_receta' receta.id %}">Eliminar</a>
+            </p>
+
+        {% endfor %}
+    {% else %}
+        <p>No hay recetas disponibles.</p>
+    {% endif %}
+
+</body>
+</html>
