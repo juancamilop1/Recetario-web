@@ -11,6 +11,7 @@ Aplicación web para organizar recetas de cocina: CRUD, votación de opciones, a
 - Entrega 1: [`docs/Recetario Web.pdf`](docs/Recetario%20Web.pdf)
 - Entrega 2: [`docs/Recetario Web - Entrega 2.pdf`](docs/Recetario%20Web%20-%20Entrega%202.pdf)
 - Video Entrega 1: https://youtu.be/FFmJFL3By50
+- Video Entrega 2: https://www.youtube.com/watch?v=C73CEqm2jwM
 - Repositorio: https://github.com/juancamilop1/Recetario-web
 - Aplicación publicada: https://recetario-web-pilj.onrender.com/recetas/
 
