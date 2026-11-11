@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}Recetario Web{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 860px; margin: 24px auto; padding: 0 16px; line-height: 1.45; }
+        nav { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #ccc; }
+        nav a { text-decoration: none; color: #0b57d0; }
+        .messages { list-style: none; padding: 0; }
+        .messages li { background: #e8f0fe; padding: 8px 12px; margin-bottom: 8px; }
+        .meta { color: #555; font-size: 0.95em; }
+        label { display: block; margin-top: 10px; }
+        input[type="text"], input[type="password"], input[type="email"], textarea { width: 100%; max-width: 480px; }
+        .errorlist { color: #b00020; }
+    </style>
+</head>
+<body>
+    <nav>
+        <strong><a href="{% url 'recetas:lista_recetas' %}">Recetario Web</a></strong>
+        {% if user.is_authenticated %}
+            <a href="{% url 'recetas:crear_receta' %}">Nueva receta</a>
+            <span class="meta">{{ user.username }}{% if user.is_staff %} (Admin){% else %} (Usuario){% endif %}</span>
+            <form action="{% url 'recetas:logout' %}" method="post" style="display:inline; margin:0;">
+                {% csrf_token %}
+                <button type="submit">Salir</button>
+            </form>
+            {% if user.is_staff %}
+                <a href="/admin/">Admin</a>
+            {% endif %}
+        {% else %}
+            <a href="{% url 'recetas:login' %}">Entrar</a>
+            <a href="{% url 'recetas:registro' %}">Registrarse</a>
+        {% endif %}
+    </nav>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</body>
+</html>

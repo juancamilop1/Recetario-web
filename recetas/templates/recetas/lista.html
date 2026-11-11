@@ -1,42 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Recetario</title>
-</head>
+{% extends "recetas/base.html" %}
 
-<body>
+{% block title %}Mi Recetario{% endblock %}
 
+{% block content %}
     <h1>Mi Recetario</h1>
 
-    <p>
-        <a href="{% url 'recetas:crear_receta' %}">Nueva receta</a>
-    </p>
+    {% if user.is_authenticated %}
+        <p><a href="{% url 'recetas:crear_receta' %}">Nueva receta</a></p>
+    {% else %}
+        <p class="meta">Inicia sesión para crear o editar recetas.</p>
+    {% endif %}
 
     <h2>Recetas disponibles</h2>
 
     {% if recetas %}
         {% for receta in recetas %}
-
             <h3>
-                <a href="{% url 'recetas:detalle_receta' receta.id %}">
-                    {{ receta.nombre }}
-                </a>
+                <a href="{% url 'recetas:detalle_receta' receta.id %}">{{ receta.nombre }}</a>
             </h3>
-
-            <p>
-                Categoría: {{ receta.categoria }}
+            <p>Categoría: {{ receta.categoria }}</p>
+            <p class="meta">
+                Autor:
+                {% if receta.usuario %}{{ receta.usuario.username }}{% else %}Sin asignar{% endif %}
             </p>
-
-            <p>
-                <a href="{% url 'recetas:editar_receta' receta.id %}">Editar</a>
-                |
-                <a href="{% url 'recetas:eliminar_receta' receta.id %}">Eliminar</a>
-            </p>
-
+            {% if user.is_staff or user == receta.usuario %}
+                <p>
+                    <a href="{% url 'recetas:editar_receta' receta.id %}">Editar</a>
+                    |
+                    <a href="{% url 'recetas:eliminar_receta' receta.id %}">Eliminar</a>
+                </p>
+            {% endif %}
         {% endfor %}
     {% else %}
         <p>No hay recetas disponibles.</p>
     {% endif %}
-
-</body>
-</html>
+{% endblock %}

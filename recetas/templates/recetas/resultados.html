@@ -1,25 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ receta.nombre }}</title>
-</head>
+{% extends "recetas/base.html" %}
 
-<body>
+{% block title %}Resultados — {{ receta.nombre }}{% endblock %}
 
-    <h1>{{ receta.nombre }}</h1>
-    <ul>
-        {% for opcion in receta.opcion_set.all %}
-            <li>{{ opcion.opcion_texto }} -- {{ opcion.votos }} voto{{ opcion.votos|pluralize }}</li>
-        {% endfor %}
-    </ul>
+{% block content %}
+    <h1>Resultados: {{ receta.nombre }}</h1>
 
-    <a href="{% url 'recetas:detalle_receta' receta.id %}">Votar de nuevo</a>
+    {% if receta.opcion_set.all %}
+        <ul>
+            {% for opcion in receta.opcion_set.all %}
+                <li>{{ opcion.opcion_texto }} — {{ opcion.votos }} voto{{ opcion.votos|pluralize:"s" }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay opciones registradas.</p>
+    {% endif %}
 
-    <br>
-
-    <a href="{% url 'recetas:lista_recetas' %}">
-        Volver al recetario
-    </a>
-
-</body>
-</html>
+    <p><a href="{% url 'recetas:detalle_receta' receta.id %}">Volver al detalle</a></p>
+    <p><a href="{% url 'recetas:lista_recetas' %}">Volver al recetario</a></p>
+{% endblock %}
