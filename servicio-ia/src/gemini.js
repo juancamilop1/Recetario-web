@@ -1,5 +1,24 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
+const DEFAULT_MODEL = 'gemini-3.5-flash-lite';
+const DEPRECATED_MODELS = new Set([
+  'gemini-1.5-flash',
+  'gemini-1.5-flash-lite',
+  'gemini-1.5-pro',
+  'gemini-2.0-flash',
+  'gemini-2.5-flash',
+  'gemini-2.5-flash-lite',
+]);
+
+function resolveModelName() {
+  let modelName = (process.env.GEMINI_MODEL || DEFAULT_MODEL).trim();
+  if (DEPRECATED_MODELS.has(modelName)) {
+    console.warn(`GEMINI_MODEL=${modelName} obsoleto; usando ${DEFAULT_MODEL}`);
+    modelName = DEFAULT_MODEL;
+  }
+  return modelName;
+}
+
 function getModel() {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey || apiKey === 'TU_API_KEY_AQUI') {
@@ -10,8 +29,7 @@ function getModel() {
     throw err;
   }
   const genAI = new GoogleGenerativeAI(apiKey);
-  const modelName = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
-  return genAI.getGenerativeModel({ model: modelName });
+  return genAI.getGenerativeModel({ model: resolveModelName() });
 }
 
 async function sugerirReceta({ ingredientes, categoria, preferencias }) {
@@ -69,4 +87,4 @@ function parseJsonResponse(text) {
   }
 }
 
-module.exports = { sugerirReceta, generarPreparacion };
+module.exports = { sugerirReceta, generarPreparacion, resolveModelName };

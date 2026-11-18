@@ -1,5 +1,5 @@
 const express = require('express');
-const { sugerirReceta, generarPreparacion } = require('./gemini');
+const { sugerirReceta, generarPreparacion, resolveModelName } = require('./gemini');
 
 const router = express.Router();
 
@@ -32,6 +32,8 @@ router.get('/health', (_req, res) => {
     status: 'ok',
     service: 'recetario-servicio-ia',
     geminiConfigured: Boolean(key && key !== 'TU_API_KEY_AQUI'),
+    geminiModel: resolveModelName(),
+    geminiModelEnv: process.env.GEMINI_MODEL || null,
   });
 });
 
