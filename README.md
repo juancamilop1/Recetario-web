@@ -1,10 +1,10 @@
 # Recetario Web
 
-Aplicación web para organizar recetas de cocina: CRUD, votación de opciones, autenticación, roles y panel de administración.
+Aplicación web para organizar recetas de cocina: CRUD, autenticación, roles, microservicio Node.js con Swagger e integración con IA (Gemini).
 
 **Curso:** Proyecto de Desarrollo Web — Grupo 500  
 **Integrantes:** Angely Liced Herrera Roldán · Juan Camilo Barragán Pottes  
-**Entrega:** 2 (núcleo funcional)
+**Entrega:** 3 (microservicios e IA)
 
 ## Documentación
 
@@ -13,52 +13,79 @@ Aplicación web para organizar recetas de cocina: CRUD, votación de opciones, a
 - Video Entrega 1: https://youtu.be/FFmJFL3By50
 - Video Entrega 2: https://www.youtube.com/watch?v=C73CEqm2jwM
 - Repositorio: https://github.com/juancamilop1/Recetario-web
-- Aplicación publicada: https://recetario-web-pilj.onrender.com/recetas/
+- App Django (E2): https://recetario-web-pilj.onrender.com/recetas/
+- Swagger Node (local): http://127.0.0.1:3000/api-docs
+- Microservicio Node desplegado: _(URL al publicar)_
+
+## Arquitectura (Entrega 3)
+
+```
+Navegador → Django (8000) → Node.js servicio-ia (3000) → Google Gemini
+                              └─ Swagger /api-docs
+```
 
 ## Requisitos
 
 - Python 3.12+
-- Docker (opcional, para contenedor)
+- Node.js 18+
+- Docker / Docker Compose (recomendado)
+
+### 1) Microservicio Node
 
 ```bash
+cd servicio-ia
+copy .env.example .env
+# Edita .env y pega GEMINI_API_KEY=...
+npm install
+npm start
+```
+
+- Health: http://127.0.0.1:3000/health  
+- Swagger: http://127.0.0.1:3000/api-docs  
+
+### 2) Django
+
+```bash
+cd ..
+copy .env.example .env
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
 
-- App: http://127.0.0.1:8000/recetas/
-- Registro: http://127.0.0.1:8000/recetas/registro/
-- Admin: http://127.0.0.1:8000/admin/
+- App: http://127.0.0.1:8000/recetas/  
+- Asistente IA: http://127.0.0.1:8000/recetas/asistente-ia/  
 
-## Docker
+`NODE_SERVICE_URL` por defecto: `http://127.0.0.1:3000`
 
-El repositorio incluye un `Dockerfile` (Python 3.12-slim, dependencias, `collectstatic`, migraciones al iniciar y Gunicorn en el puerto 8000).
+## Docker Compose
 
-Variables de entorno: `DJANGO_SECRET_KEY`, `DJANGO_DEBUG`, `DJANGO_ALLOWED_HOSTS`, `DJANGO_CSRF_TRUSTED_ORIGINS`.
+Con la key en el entorno (o en un `.env` en la raíz):
 
 ```bash
-docker build -t recetario-web .
-docker run --rm -p 8000:8000 ^
-  -e DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1 ^
-  -e DJANGO_DEBUG=True ^
-  recetario-web
+# PowerShell
+$env:GEMINI_API_KEY="TU_API_KEY_AQUI"
+docker compose up --build
 ```
 
-Luego: http://127.0.0.1:8000/recetas/
+Servicios:
+- `web` → http://localhost:8000  
+- `servicio-ia` → http://localhost:3000/api-docs  
 
 ## Roles
 
 | Rol | Capacidad |
 |---|---|
 | Anónimo | Listar y ver detalle / resultados |
-| Usuario | Registro/login; CRUD de sus recetas; votar |
+| Usuario | CRUD propio, votar, asistente IA |
 | Administrador | Django Admin; gestiona cualquier receta |
 
 ## Estructura
 
 ```
-recetario/     # configuración Django
-recetas/       # dominio, auth de pantallas, plantillas
-docs/          # documentos de entrega
-Dockerfile     # imagen de la aplicación
+recetario/       # proyecto Django
+recetas/         # app de dominio + cliente Node
+servicio-ia/     # microservicio Node + Swagger + Gemini
+docker-compose.yml
+docs/            # PDFs de entrega
 ```

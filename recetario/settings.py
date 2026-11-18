@@ -67,10 +67,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'recetario.wsgi.application'
 
+_sqlite_name = os.environ.get('DJANGO_DB_PATH', str(BASE_DIR / 'db.sqlite3'))
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': _sqlite_name,
     }
 }
 
@@ -99,3 +100,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'recetas:login'
 LOGIN_REDIRECT_URL = 'recetas:lista_recetas'
 LOGOUT_REDIRECT_URL = 'recetas:lista_recetas'
+
+# Microservicio Node.js (IA / Swagger)
+NODE_SERVICE_URL = os.environ.get('NODE_SERVICE_URL', 'http://127.0.0.1:3000')

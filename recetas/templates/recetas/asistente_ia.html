@@ -1,0 +1,57 @@
+{% extends "recetas/base.html" %}
+
+{% block title %}Asistente IA{% endblock %}
+
+{% block content %}
+    <h1>Asistente IA de recetas</h1>
+    <p class="meta">
+        Flujo: <strong>Django → microservicio Node.js → Gemini</strong>.
+        Node: <code>{{ node_url }}</code>
+        {% if node_ok %}(conectado){% else %}(no responde){% endif %}.
+        <a href="{{ swagger_url }}" target="_blank" rel="noopener">Abrir Swagger</a>
+    </p>
+
+    {% if error %}
+        <p style="color:#b00020;"><strong>{{ error }}</strong></p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <label>Ingredientes
+            <textarea name="ingredientes" rows="3" required>{{ form_data.ingredientes }}</textarea>
+        </label>
+        <label>Categoría
+            <input type="text" name="categoria" value="{{ form_data.categoria }}">
+        </label>
+        <label>Preferencias
+            <input type="text" name="preferencias" value="{{ form_data.preferencias }}" placeholder="ej. vegetariano, 20 minutos">
+        </label>
+        <p style="margin-top:14px;">
+            <button type="submit">Sugerir receta con IA</button>
+        </p>
+    </form>
+
+    {% if resultado %}
+        <h2>Sugerencia</h2>
+        <p><strong>Nombre:</strong> {{ resultado.nombre }}</p>
+        <p><strong>Categoría:</strong> {{ resultado.categoria }}</p>
+        <h3>Ingredientes</h3>
+        <p>{{ resultado.ingredientes }}</p>
+        <h3>Preparación</h3>
+        <p style="white-space:pre-wrap;">{{ resultado.preparacion }}</p>
+        {% if resultado.raw %}
+            <pre>{{ resultado.raw }}</pre>
+        {% endif %}
+
+        <form method="post" action="{% url 'recetas:guardar_sugerencia_ia' %}">
+            {% csrf_token %}
+            <input type="hidden" name="nombre" value="{{ resultado.nombre }}">
+            <input type="hidden" name="categoria" value="{{ resultado.categoria }}">
+            <input type="hidden" name="ingredientes" value="{{ resultado.ingredientes }}">
+            <input type="hidden" name="preparacion" value="{{ resultado.preparacion }}">
+            <button type="submit">Guardar en mi recetario</button>
+        </form>
+    {% endif %}
+
+    <p><a href="{% url 'recetas:lista_recetas' %}">Volver al recetario</a></p>
+{% endblock %}

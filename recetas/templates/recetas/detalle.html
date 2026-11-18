@@ -24,6 +24,8 @@
             <a href="{% url 'recetas:editar_receta' receta.id %}">Editar</a>
             |
             <a href="{% url 'recetas:eliminar_receta' receta.id %}">Eliminar</a>
+            |
+            <a href="{% url 'recetas:generar_preparacion_ia' receta.id %}">Generar preparación con IA</a>
         </p>
     {% endif %}
 

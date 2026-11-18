@@ -26,6 +26,10 @@ Thumbs.db
 .env.*
 !.env.example
 
+# Node
+node_modules/
+servicio-ia/node_modules/
+
 # Coverage / test
 .coverage
 htmlcov/
