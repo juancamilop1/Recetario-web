@@ -10,12 +10,15 @@ Aplicación web para organizar recetas de cocina: CRUD, autenticación, roles, m
 
 - Entrega 1: [`docs/Recetario Web.pdf`](docs/Recetario%20Web.pdf)
 - Entrega 2: [`docs/Recetario Web - Entrega 2.pdf`](docs/Recetario%20Web%20-%20Entrega%202.pdf)
+- Entrega 3: [`docs/Recetario Web - Entrega 3.pdf`](docs/Recetario%20Web%20-%20Entrega%203.pdf)
 - Video Entrega 1: https://youtu.be/FFmJFL3By50
 - Video Entrega 2: https://www.youtube.com/watch?v=C73CEqm2jwM
+- Video Entrega 3: https://www.youtube.com/watch?v=IKS0ypaqq8Q
 - Repositorio: https://github.com/juancamilop1/Recetario-web
-- App Django (E2): https://recetario-web-pilj.onrender.com/recetas/
-- Swagger Node (local): http://127.0.0.1:3000/api-docs
-- Microservicio Node desplegado: _(URL al publicar)_
+- App Django (Render): https://recetario-web-pilj.onrender.com/recetas/
+- Microservicio Node (Render): https://recetario-servicio-ia.onrender.com
+- Health Node: https://recetario-servicio-ia.onrender.com/health
+- Swagger Node (público): https://recetario-servicio-ia.onrender.com/api-docs
 
 ## Arquitectura (Entrega 3)
 
