@@ -3,18 +3,42 @@
 {% block title %}Resultados — {{ receta.nombre }}{% endblock %}
 
 {% block content %}
-    <h1>Resultados: {{ receta.nombre }}</h1>
+    <div style="margin-bottom:14px;">
+        <a href="{% url 'recetas:detalle_receta' receta.id %}">&larr; Volver al detalle</a>
+    </div>
 
-    {% if receta.opcion_set.all %}
-        <ul>
-            {% for opcion in receta.opcion_set.all %}
-                <li>{{ opcion.opcion_texto }} — {{ opcion.votos }} voto{{ opcion.votos|pluralize:"s" }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No hay opciones registradas.</p>
-    {% endif %}
+    <section class="card">
+        <div class="page-header" style="margin-bottom:16px;">
+            <div>
+                <span class="badge" style="margin-bottom:6px;">{{ receta.categoria }}</span>
+                <h1 style="margin:0;">Resultados: {{ receta.nombre }}</h1>
+            </div>
+            <span class="meta">Total de votos: <strong>{{ total_votos }}</strong></span>
+        </div>
 
-    <p><a href="{% url 'recetas:detalle_receta' receta.id %}">Volver al detalle</a></p>
-    <p><a href="{% url 'recetas:lista_recetas' %}">Volver al recetario</a></p>
+        {% if opciones_detalle %}
+            <div style="display:flex; flex-direction:column; gap:14px;">
+                {% for item in opciones_detalle %}
+                    <div>
+                        <div style="display:flex; justify-content:space-between; gap:8px; font-size:0.95rem;">
+                            <strong>{{ item.opcion.opcion_texto }}</strong>
+                            <span class="meta">
+                                {{ item.opcion.votos }} voto{{ item.opcion.votos|pluralize:"s" }} ({{ item.porcentaje }}%)
+                            </span>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width: {{ item.porcentaje }}%;"></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="meta">No hay opciones registradas para esta receta.</p>
+        {% endif %}
+
+        <div class="actions" style="margin-top:22px;">
+            <a class="btn btn-secondary" href="{% url 'recetas:detalle_receta' receta.id %}">Volver al detalle</a>
+            <a class="btn btn-secondary" href="{% url 'recetas:lista_recetas' %}">Ir al listado</a>
+        </div>
+    </section>
 {% endblock %}

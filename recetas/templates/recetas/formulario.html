@@ -3,13 +3,24 @@
 {% block title %}{{ titulo }}{% endblock %}
 
 {% block content %}
-    <h1>{{ titulo }}</h1>
+    <div style="margin-bottom:14px;">
+        <a href="{% url 'recetas:lista_recetas' %}">&larr; Volver al recetario</a>
+    </div>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Guardar">
-    </form>
+    <section class="card form-card">
+        <h1>{{ titulo }}</h1>
 
-    <p><a href="{% url 'recetas:lista_recetas' %}">Volver al recetario</a></p>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="actions" style="margin-top:16px;">
+                <button type="submit" class="btn btn-primary">Guardar receta</button>
+                {% if receta %}
+                    <a class="btn btn-secondary" href="{% url 'recetas:detalle_receta' receta.id %}">Cancelar</a>
+                {% else %}
+                    <a class="btn btn-secondary" href="{% url 'recetas:lista_recetas' %}">Cancelar</a>
+                {% endif %}
+            </div>
+        </form>
+    </section>
 {% endblock %}

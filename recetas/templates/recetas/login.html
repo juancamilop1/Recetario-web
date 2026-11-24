@@ -3,11 +3,16 @@
 {% block title %}Iniciar sesión{% endblock %}
 
 {% block content %}
-    <h1>Iniciar sesión</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Entrar</button>
-    </form>
-    <p>¿No tienes cuenta? <a href="{% url 'recetas:registro' %}">Regístrate</a></p>
+    <section class="card form-card">
+        <h1>Iniciar sesión</h1>
+        <p class="meta" style="margin-top:0;">Accede para gestionar tus recetas, votar y usar el Asistente IA.</p>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary" style="width:100%; margin-top:6px;">Entrar</button>
+        </form>
+        <p class="meta" style="margin:16px 0 0; text-align:center;">
+            ¿No tienes cuenta? <a href="{% url 'recetas:registro' %}">Regístrate aquí</a>
+        </p>
+    </section>
 {% endblock %}

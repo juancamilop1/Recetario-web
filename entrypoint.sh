@@ -10,5 +10,6 @@ fi
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput
 python scripts/ensure_superuser.py
+python scripts/seed_demo.py
 
 exec gunicorn recetario.wsgi:application --bind 0.0.0.0:8000

@@ -3,10 +3,11 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.contrib.auth.views import LoginView, LogoutView
-from django.db.models import F
+from django.db.models import F, Q
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+from django.views.decorators.http import require_POST
 
 from . import node_client
 from .forms import RecetaForm, RegistroForm
@@ -26,8 +27,33 @@ def _puede_gestionar(user, receta):
 
 
 def lista_recetas(request):
-    recetas = Receta.objects.select_related('usuario').all()
-    return render(request, 'recetas/lista.html', {'recetas': recetas})
+    q = request.GET.get('q', '').strip()
+    categoria_activa = request.GET.get('categoria', '').strip()
+
+    recetas = Receta.objects.select_related('usuario').all().order_by('-id')
+    if q:
+        recetas = recetas.filter(
+            Q(nombre__icontains=q)
+            | Q(categoria__icontains=q)
+            | Q(ingredientes__icontains=q)
+        )
+    if categoria_activa:
+        recetas = recetas.filter(categoria__iexact=categoria_activa)
+
+    categorias = sorted(
+        {
+            c.strip()
+            for c in Receta.objects.values_list('categoria', flat=True)
+            if c and c.strip()
+        },
+        key=str.lower,
+    )
+    return render(request, 'recetas/lista.html', {
+        'recetas': recetas,
+        'q': q,
+        'categoria_activa': categoria_activa,
+        'categorias': categorias,
+    })
 
 
 def detalle_receta(request, receta_id):
@@ -87,10 +113,24 @@ def eliminar_receta(request, receta_id):
 
 def resultados(request, receta_id):
     receta = get_object_or_404(Receta, pk=receta_id)
-    return render(request, 'recetas/resultados.html', {'receta': receta})
+    opciones = list(receta.opcion_set.all())
+    total_votos = sum(op.votos for op in opciones)
+    opciones_detalle = [
+        {
+            'opcion': op,
+            'porcentaje': round((op.votos / total_votos) * 100) if total_votos else 0,
+        }
+        for op in opciones
+    ]
+    return render(request, 'recetas/resultados.html', {
+        'receta': receta,
+        'opciones_detalle': opciones_detalle,
+        'total_votos': total_votos,
+    })
 
 
 @login_required
+@require_POST
 def votar(request, receta_id):
     receta = get_object_or_404(Receta, pk=receta_id)
     try:
@@ -166,6 +206,7 @@ def asistente_ia(request):
 
 
 @login_required
+@require_POST
 def generar_preparacion_ia(request, receta_id):
     """Django → Node: genera preparación para una receta existente."""
     receta = get_object_or_404(Receta, pk=receta_id)

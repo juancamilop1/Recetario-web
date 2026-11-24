@@ -3,55 +3,91 @@
 {% block title %}Asistente IA{% endblock %}
 
 {% block content %}
-    <h1>Asistente IA de recetas</h1>
-    <p class="meta">
-        Flujo: <strong>Django → microservicio Node.js → Gemini</strong>.
-        Node: <code>{{ node_url }}</code>
-        {% if node_ok %}(conectado){% else %}(no responde){% endif %}.
-        <a href="{{ swagger_url }}" target="_blank" rel="noopener">Abrir Swagger</a>
-    </p>
+    <div style="margin-bottom:14px;">
+        <a href="{% url 'recetas:lista_recetas' %}">&larr; Volver al recetario</a>
+    </div>
+
+    <div class="page-header">
+        <div>
+            <h1 style="margin-bottom:4px;">Asistente IA de recetas</h1>
+            <p class="meta" style="margin:0;">
+                Flujo: <strong>Django → microservicio Node.js → Google Gemini</strong>
+            </p>
+        </div>
+        <div class="actions">
+            {% if node_ok %}
+                <span class="badge badge-ok">
+                    <span class="dot"></span>
+                    Node conectado{% if node_health.geminiModel %} · {{ node_health.geminiModel }}{% endif %}
+                </span>
+            {% else %}
+                <span class="badge badge-err">
+                    <span class="dot"></span>
+                    Node sin respuesta
+                </span>
+            {% endif %}
+            <a class="btn btn-secondary btn-sm" href="{{ swagger_url }}" target="_blank" rel="noopener">Abrir Swagger</a>
+        </div>
+    </div>
 
     {% if error %}
-        <p style="color:#b00020;"><strong>{{ error }}</strong></p>
+        <div class="alert-error"><strong>Error:</strong> {{ error }}</div>
     {% endif %}
 
-    <form method="post">
-        {% csrf_token %}
-        <label>Ingredientes
-            <textarea name="ingredientes" rows="3" required>{{ form_data.ingredientes }}</textarea>
-        </label>
-        <label>Categoría
-            <input type="text" name="categoria" value="{{ form_data.categoria }}">
-        </label>
-        <label>Preferencias
-            <input type="text" name="preferencias" value="{{ form_data.preferencias }}" placeholder="ej. vegetariano, 20 minutos">
-        </label>
-        <p style="margin-top:14px;">
-            <button type="submit">Sugerir receta con IA</button>
+    <section class="card">
+        <h2>Pide una sugerencia</h2>
+        <p class="meta" style="margin-top:0;">
+            Servicio configurado: <code>{{ node_url }}</code>
         </p>
-    </form>
+
+        <form
+            method="post"
+            onsubmit="var b=this.querySelector('button[type=submit]'); b.disabled=true; b.textContent='Consultando a Gemini...';"
+        >
+            {% csrf_token %}
+            <p>
+                <label for="id_ingredientes">Ingredientes disponibles</label>
+                <textarea id="id_ingredientes" name="ingredientes" rows="3" placeholder="ej. pollo, arroz, cebolla, pimentón" required>{{ form_data.ingredientes }}</textarea>
+            </p>
+            <p>
+                <label for="id_categoria">Categoría</label>
+                <input id="id_categoria" type="text" name="categoria" value="{{ form_data.categoria }}" placeholder="ej. Almuerzo, Cena, Desayuno, Postre">
+            </p>
+            <p>
+                <label for="id_preferencias">Preferencias (opcional)</label>
+                <input id="id_preferencias" type="text" name="preferencias" value="{{ form_data.preferencias }}" placeholder="ej. poca grasa, vegetariano, 25 minutos">
+            </p>
+            <button type="submit" class="btn btn-ai">Sugerir receta con IA</button>
+        </form>
+    </section>
 
     {% if resultado %}
-        <h2>Sugerencia</h2>
-        <p><strong>Nombre:</strong> {{ resultado.nombre }}</p>
-        <p><strong>Categoría:</strong> {{ resultado.categoria }}</p>
-        <h3>Ingredientes</h3>
-        <p>{{ resultado.ingredientes }}</p>
-        <h3>Preparación</h3>
-        <p style="white-space:pre-wrap;">{{ resultado.preparacion }}</p>
-        {% if resultado.raw %}
-            <pre>{{ resultado.raw }}</pre>
-        {% endif %}
+        <section class="card" style="border-color:#c7d2fe;">
+            <div class="page-header" style="margin-bottom:12px;">
+                <div>
+                    <span class="badge" style="background:#eef2ff; color:var(--ai); border-color:#c7d2fe; margin-bottom:6px;">Sugerencia IA</span>
+                    <h2 style="margin:0;">{{ resultado.nombre }}</h2>
+                    <p class="meta" style="margin:4px 0 0;">Categoría: <strong>{{ resultado.categoria }}</strong></p>
+                </div>
+                <form method="post" action="{% url 'recetas:guardar_sugerencia_ia' %}" style="margin:0;">
+                    {% csrf_token %}
+                    <input type="hidden" name="nombre" value="{{ resultado.nombre }}">
+                    <input type="hidden" name="categoria" value="{{ resultado.categoria }}">
+                    <input type="hidden" name="ingredientes" value="{{ resultado.ingredientes }}">
+                    <input type="hidden" name="preparacion" value="{{ resultado.preparacion }}">
+                    <button type="submit" class="btn btn-primary">Guardar en mi recetario</button>
+                </form>
+            </div>
 
-        <form method="post" action="{% url 'recetas:guardar_sugerencia_ia' %}">
-            {% csrf_token %}
-            <input type="hidden" name="nombre" value="{{ resultado.nombre }}">
-            <input type="hidden" name="categoria" value="{{ resultado.categoria }}">
-            <input type="hidden" name="ingredientes" value="{{ resultado.ingredientes }}">
-            <input type="hidden" name="preparacion" value="{{ resultado.preparacion }}">
-            <button type="submit">Guardar en mi recetario</button>
-        </form>
+            <h3>Ingredientes</h3>
+            <p class="pre-wrap" style="margin-bottom:16px;">{{ resultado.ingredientes }}</p>
+
+            <h3>Preparación</h3>
+            <p class="pre-wrap">{{ resultado.preparacion }}</p>
+
+            {% if resultado.raw %}
+                <pre style="background:var(--surface-soft); padding:12px; border-radius:8px; overflow-x:auto;">{{ resultado.raw }}</pre>
+            {% endif %}
+        </section>
     {% endif %}
-
-    <p><a href="{% url 'recetas:lista_recetas' %}">Volver al recetario</a></p>
 {% endblock %}
