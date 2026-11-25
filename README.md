@@ -4,7 +4,7 @@ Aplicación web para organizar recetas de cocina: CRUD, búsqueda y filtros, aut
 
 **Curso:** Proyecto de Desarrollo Web — Grupo 500  
 **Integrantes:** Angely Liced Herrera Roldán · Juan Camilo Barragán Pottes  
-**Entrega:** Final (ExpoUninpahu)
+**Entrega:** Final 
 
 ## Documentación y enlaces
 
